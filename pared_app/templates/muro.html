@@ -1,0 +1,88 @@
+{% extends "index.html" %}
+
+{% block pagina %}
+
+    <div class="row" style="background: white">
+        <div class="col-9"></div>
+        <div class="col-3"> Bienvenido
+            {{ request.session.log_name }} /
+            <a href="/" class="text-end">Log out</a>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-5 mx-4">
+            <div style="height:30px"></div>
+            <div class="row">
+                <div class="card text-center m-auto">
+                    <div class="card-body text-start">
+                        <h5 class="card-title">Escribe un mensaje</h5>
+
+                        <form method="post" action="/wall/add_mensaje/{{ request.session.log_id }}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <textarea class="form-control" name="wall_post" id="wall_post" rows="3"></textarea>
+                            </div>
+                            <div class="row justify-content-end mx-4">
+                                <button type="submit" class="btn btn-primary col-3  mb-2">Publicar</button>
+                            </div>
+                        </form>
+                        <p class="card-text">¡Esperamos que disfrutes tu estancia en nuestro sitio!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-5 overflow-auto mt-4 ms-4" style="height: 620px">
+    <div class="row">
+        <div class="m-auto p-5 mb-2 rounded " style="background-image: radial-gradient(#07AFAF , #176363, #0b4e6c); border: 5px solid white" >
+        {% for publicado in mnsj %}
+            <div class="row">
+                <div class="bg-white border-start border-5 rounded border-warning text-start p-2">
+                    <div class="row justify-content-between">
+                    <strong class="fs-6 col-8">{{ publicado.mensaje_usuario_id.name }} {{ publicado.mensaje_usuario_id.apellido }} - {{ publicado.created_at }}</strong>
+                    <a href="/wall/eliminar_mensaje/{{ publicado.mensaje_usuario_id.id }}/{{ publicado.id }}" type="button" class="btn-close mx-3 border border-2" aria-label="Close"></a>
+                    </div>
+                    <div class="row col-12">
+                        <p>{{ publicado.mensaje }}</p>
+                    </div>
+                   <form method="post" action="/wall/add_comentario/{{ request.session.log_id }}/{{ publicado.id }}">
+                    {% csrf_token %}
+                       <div class="row">
+                           <div class="col-8">
+                                <div class="mb-3">
+                                    <textarea class="form-control" name="wall_comment" id="wall_comment" rows="1" placeholder="Escribe un comentario"></textarea>
+                                </div>
+                           </div>
+                           <div class="col-4">
+                                <div class="row justify-content-end mx-4">
+                                    <button type="submit" class="btn btn-primary mb-2">Publicar</button>
+                                </div>
+                           </div>
+                       </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+            {% for comment in cmntr %}
+                {% if comment.comentario_mensaje_id.id == publicado.id %}
+                <div class="col-1"></div>
+                <div class="bg-white border-start border-4 rounded border-info text-start col-11 mt-1 p-2">
+
+                            <div class="row justify-content-between">
+                                <strong class="fs-6 col-8">{{ comment.comentario_usuario_id.name }} {{ comment.comentario_usuario_id.apellido }} - {{ comment.created_at }}</strong>
+                                <a href="/wall/eliminar_comentario/{{ comment.comentario_usuario_id.id }}/{{ comment.id }}" type="button" class="btn-close mx-3 border border-2" aria-label="Close"></a>
+                            </div>
+                            <div class="row col-12">
+                                <p class="text-dark">{{ comment.comentario }}</p>
+                            </div>
+
+                </div>
+                {% endif %}
+            {% endfor %}
+            </div>
+        <hr>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+    </div>
+{% endblock %}
