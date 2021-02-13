@@ -1,5 +1,4 @@
 from django.db import models
-from login_app.models import Cuenta, Usuario
 
 class Mensajes(models.Model):
     mensaje = models.TextField()

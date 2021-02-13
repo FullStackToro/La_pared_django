@@ -13,6 +13,9 @@ def success(request, op):
 
 def muro(request):
     if request.session['log_user'] != 0:
+        temp=Usuario.objects.all()
+        for user in temp:
+            print(user.users_comentario)
         context= {
             'mnsj': Mensajes.objects.all().order_by('-id'),
             'cmntr': Comentarios.objects.all()
@@ -42,6 +45,7 @@ def delete_comment(request,_op,_comentario_id):
         if request.session['log_id'] == _op:
             temp = Comentarios.objects.get(id=_comentario_id)
             temp.delete()
+            return redirect('/wall')
     else:
         return redirect('/')
     return redirect('/wall')
@@ -51,6 +55,7 @@ def delete_mensaje(request,_op,_mensaje_id):
         if request.session['log_id'] == _op:
             temp=Mensajes.objects.get(id=_mensaje_id)
             temp.delete()
+            return redirect('/wall')
     else:
         return redirect('/')
     return redirect('/wall')
